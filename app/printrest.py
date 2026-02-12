@@ -414,7 +414,7 @@ def login():
         try:
             message_decrypted = (
                 decryptor.update(bytes.fromhex(login_cookie)) + decryptor.finalize()
-            )
+           )
         except cryptography.exceptions.InvalidTag:
             pass
         except ValueError:
@@ -443,6 +443,7 @@ def login():
     # Check if we got a 200 OK
     # If not we cannot check the login and we should fail right here
     if user_response.status_code != 200:
+        print("cannot connect to knet api")
         return "login failed", 500
 
     # There should only be one response.
@@ -450,6 +451,7 @@ def login():
     # If more then we cannot check password correctly.
     # TODO Handle lack of ['count'] key in a graceful way
     if user_response.json()["count"] != 1:
+        print("user not found")
         return "Login failed", 500
 
     # Get password to compare. First result contain password with salt
@@ -460,6 +462,7 @@ def login():
 
     # We check that sha1 was used. If not we cannot check the password
     if pwd_parts[0] != "sha1":
+        print("password wrong")
         return "Login failed", 500
 
     # Perform the hashing with the given password and the salt from k-net
